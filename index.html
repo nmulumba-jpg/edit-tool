@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Video Edit Tool</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 50px;
+    }
+    video {
+      max-width: 90%;
+      margin: 20px 0;
+    }
+    input, button {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Video Edit Tool</h1>
+
+  <!-- Upload Video -->
+  <input type="file" id="videoInput" accept="video/*">
+  <br>
+
+  <!-- Video Preview -->
+  <video id="videoPreview" controls></video>
+  <br>
+
+  <!-- Trim Controls -->
+  <label>Start Time (sec): </label>
+  <input type="number" id="startTime" value="0" min="0">
+  <label>End Time (sec): </label>
+  <input type="number" id="endTime" value="10" min="1">
+  <br>
+
+  <!-- Text Overlay -->
+  <label>Text Overlay: </label>
+  <input type="text" id="overlayText" placeholder="Your text here">
+  <br>
+
+  <button onclick="applyEdit()">Preview Edit</button>
+
+  <script>
+    const videoInput = document.getElementById('videoInput');
+    const videoPreview = document.getElementById('videoPreview');
+    const startTimeInput = document.getElementById('startTime');
+    const endTimeInput = document.getElementById('endTime');
+    const overlayTextInput = document.getElementById('overlayText');
+
+    let videoURL = '';
+
+    // Load video preview
+    videoInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      videoURL = URL.createObjectURL(file);
+      videoPreview.src = videoURL;
+    });
+
+    function applyEdit() {
+      const start = parseFloat(startTimeInput.value);
+      const end = parseFloat(endTimeInput.value);
+      const overlayText = overlayTextInput.value;
+
+      if (!videoURL) {
+        alert("Please upload a video first.");
+        return;
+      }
+
+      // Trim preview (just sets playback range)
+      videoPreview.currentTime = start;
+      videoPreview.play();
+
+      videoPreview.ontimeupdate = function() {
+        if (videoPreview.currentTime >= end) {
+          videoPreview.pause();
+        }
+      }
+
+      if (overlayText) {
+        // Simple alert for demo
+        alert("Text overlay (for demo): " + overlayText);
+      }
+    }
+  </script>
+</body>
+</html>
